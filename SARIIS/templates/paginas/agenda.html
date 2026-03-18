@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Agenda Técnico Desktop Optimizada</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1B396A", // Official TecNM Navy Blue
+                        "primary-hover": "#0f254a", // Darker shade for hover
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        secondary: "#D4AF37", // Gold accent
+                    },
+                    fontFamily: {
+                        display: ["Lexend", "sans-serif"],
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex overflow-hidden">
+<aside class="hidden w-[20%] flex-col border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950 md:flex">
+<div class="flex h-16 items-center border-b border-slate-200 px-6 dark:border-slate-800">
+<div class="flex items-center gap-2">
+<div class="flex h-8 w-8 items-center justify-center">
+<img alt="Logotipo Oficial Instituto Tecnológico de Minatitlán" class="h-full w-full object-contain filter drop-shadow-sm" src="https://minatitlan.tecnm.mx/wp-content/uploads/2023/01/Logo.png"/>
+</div>
+<div>
+<h1 class="text-sm font-bold leading-tight text-primary dark:text-white">TecNM Minatitlán</h1>
+<p class="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">Mantenimiento</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto px-4 py-4">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-50" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+                        Dashboard
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 rounded-lg bg-primary/5 px-3 py-2 text-sm font-medium text-primary transition-colors dark:bg-primary/20 dark:text-white" href="#">
+<span class="material-symbols-outlined text-[20px] fill-1">calendar_today</span>
+                        Mi Agenda
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-50" href="#">
+<span class="material-symbols-outlined text-[20px]">history</span>
+                        Historial
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-50" href="#">
+<span class="material-symbols-outlined text-[20px]">person</span>
+                        Perfil
+                    </a>
+</li>
+
+<li>
+        <a class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-bold text-red-600 transition-colors hover:bg-red-50 dark:hover:bg-red-900/20" href="{{ url_for('logout') }}">
+            <span class="material-symbols-outlined text-[20px]">logout</span>
+            Salir
+        </a>
+    </li>
+
+</ul>
+</nav>
+<div class="border-t border-slate-200 p-4 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="h-9 w-9 overflow-hidden rounded-full bg-slate-200 ring-2 ring-white dark:ring-slate-800">
+<img alt="Profile" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCW8hhvQIWKsHP1jgM4RR2vCFe7tFoJGhwajgxX2XXIVmka3071EKQMbZClecJT-Ove-ueB33686uOBpplTD6jYQlmvG67FILAPPn9ks6Bn6eiK6hNimk1jN5JBxLyew4SglF963VzIRM1zw4cJMaZ3pmSk_r5fynwp0Hi4eJUc60g5RHoCvFNT4wds4A8mr8GuduM8yf74BJX2RJRwi5VKx4b-8pTv9sj7bbbZyzVdIQYeQsa9EjBi462mos1WKT_XS7WTEb65vt8k"/>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-slate-900 dark:text-white">Téc. R. López</span>
+<span class="flex items-center gap-1 text-[10px] font-medium text-green-600">
+<span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                        En línea
+                    </span>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex flex-1 flex-col overflow-y-auto bg-background-light dark:bg-background-dark w-[80%]">
+<header class="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-8 shadow-sm backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/90">
+<h2 class="text-xl font-bold text-primary dark:text-white">Mi Agenda de Trabajo</h2>
+<div class="flex items-center gap-4">
+<div class="relative w-72">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</span>
+<input class="h-10 w-full rounded-lg border-slate-200 bg-slate-50 pl-10 pr-4 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-primary" placeholder="Buscar folio..." type="text"/>
+</div>
+<span class="text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full dark:bg-slate-800 dark:text-slate-400 whitespace-nowrap">Hoy: 18 tickets</span>
+</div>
+</header>
+<div class="p-8 space-y-6">
+<section>
+<h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Resumen de hoy</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="flex items-center justify-between rounded-xl bg-blue-50 border border-blue-100 p-4 shadow-sm dark:bg-blue-900/20 dark:border-blue-800">
+<div class="flex flex-col">
+<span class="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase">Pendientes</span>
+<span class="text-2xl font-bold text-blue-800 dark:text-blue-100">5</span>
+</div>
+<div class="p-2 bg-blue-100 rounded-full text-blue-600 dark:bg-blue-800 dark:text-blue-200">
+<span class="material-symbols-outlined">assignment</span>
+</div>
+</div>
+<div class="flex items-center justify-between rounded-xl bg-amber-50 border border-amber-100 p-4 shadow-sm dark:bg-amber-900/20 dark:border-amber-800">
+<div class="flex flex-col">
+<span class="text-xs font-medium text-amber-600 dark:text-amber-400 uppercase">En Curso</span>
+<span class="text-2xl font-bold text-amber-800 dark:text-amber-100">3</span>
+</div>
+<div class="p-2 bg-amber-100 rounded-full text-amber-600 dark:bg-amber-800 dark:text-amber-200">
+<span class="material-symbols-outlined">timelapse</span>
+</div>
+</div>
+<div class="flex items-center justify-between rounded-xl bg-green-50 border border-green-100 p-4 shadow-sm dark:bg-green-900/20 dark:border-green-800">
+<div class="flex flex-col">
+<span class="text-xs font-medium text-green-600 dark:text-green-400 uppercase">Finalizados</span>
+<span class="text-2xl font-bold text-green-800 dark:text-green-100">10</span>
+</div>
+<div class="p-2 bg-green-100 rounded-full text-green-600 dark:bg-green-800 dark:text-green-200">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-4">
+<article class="relative flex flex-col gap-4 rounded-xl border-2 border-green-500 bg-white p-5 shadow-md ring-4 ring-green-500/10 dark:border-green-600 dark:bg-slate-900 h-full">
+<div class="flex items-start justify-between">
+<div>
+<div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Folio #2024-099</div>
+<h3 class="text-base font-bold text-slate-900 dark:text-white leading-tight">Lab. Cómputo 1</h3>
+</div>
+<span class="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700 dark:bg-green-900/40 dark:text-green-300 animate-pulse whitespace-nowrap">
+<span class="h-1.5 w-1.5 rounded-full bg-green-600"></span>
+                            En Progreso
+                        </span>
+</div>
+<p class="text-sm font-medium text-slate-600 dark:text-slate-300 flex-grow leading-snug">Reparación de contacto eléctrico mesa 4</p>
+<div class="flex items-center gap-2 text-[10px] text-slate-500 border-t border-slate-100 pt-3 dark:border-slate-800">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">person</span>
+                            Prof. Méndez
+                        </span>
+<span class="text-slate-300 dark:text-slate-700">|</span>
+<span class="flex items-center gap-1 text-green-600 font-medium">
+<span class="material-symbols-outlined text-[14px]">timer</span>
+                            Hace 25 min
+                        </span>
+</div>
+<div class="mt-2">
+<label class="mb-1 block text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase">
+                            Notas de Reparación
+                        </label>
+<textarea class="w-full rounded-md border-slate-300 bg-slate-50 p-2 text-xs shadow-sm focus:border-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white" placeholder="Describa el trabajo..." rows="2"></textarea>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-2">
+<button class="flex w-full items-center justify-center gap-1 rounded-md bg-slate-100 py-2 text-xs font-bold text-slate-400 cursor-not-allowed opacity-70 dark:bg-slate-800 dark:text-slate-600" disabled="">
+                            Iniciar
+                        </button>
+<button class="flex w-full items-center justify-center gap-1 rounded-md bg-green-600 py-2 text-xs font-bold text-white shadow-md active:scale-[0.98] transition-transform hover:bg-green-700">
+<span class="material-symbols-outlined text-[16px]">check</span>
+                            Completar
+                        </button>
+</div>
+</article>
+<article class="relative flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow dark:border-slate-700 dark:bg-slate-900 h-full">
+<div class="flex items-start justify-between">
+<div>
+<div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Folio #2024-102</div>
+<h3 class="text-base font-bold text-slate-900 dark:text-white leading-tight">Edificio B / Aula 5</h3>
+</div>
+<span class="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700 dark:bg-red-900/40 dark:text-red-300 whitespace-nowrap">
+<span class="material-symbols-outlined text-[12px]">priority_high</span>
+                            Alta
+                        </span>
+</div>
+<p class="text-sm font-medium text-slate-600 dark:text-slate-300 flex-grow leading-snug">Falla en aire acondicionado (No enfría)</p>
+<div class="flex items-center gap-2 text-[10px] text-slate-500 border-t border-slate-100 pt-3 dark:border-slate-800">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                            09:30 AM
+                        </span>
+<span class="text-slate-300 dark:text-slate-700">|</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">person</span>
+                            Juan Pérez
+                        </span>
+</div>
+<div class="mt-2 hidden"> 
+<label class="mb-1 block text-[10px] font-bold text-transparent">Placeholder</label>
+<div class="h-[54px]"></div>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-auto">
+<button class="flex w-full items-center justify-center gap-1 rounded-md bg-primary py-2 text-xs font-bold text-white shadow-md active:scale-[0.98] transition-transform hover:bg-primary-hover">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+                            Iniciar
+                        </button>
+<button class="flex w-full items-center justify-center gap-1 rounded-md bg-slate-100 py-2 text-xs font-bold text-slate-400 cursor-not-allowed opacity-70 dark:bg-slate-800 dark:text-slate-600" disabled="">
+<span class="material-symbols-outlined text-[16px]">check</span>
+                            Completar
+                        </button>
+</div>
+</article>
+<article class="relative flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow dark:border-slate-700 dark:bg-slate-900 h-full opacity-90">
+<div class="flex items-start justify-between">
+<div>
+<div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Folio #2024-101</div>
+<h3 class="text-base font-bold text-slate-900 dark:text-white leading-tight">Biblioteca</h3>
+</div>
+<span class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 whitespace-nowrap">
+                            Media
+                        </span>
+</div>
+<p class="text-sm font-medium text-slate-600 dark:text-slate-300 flex-grow leading-snug">Reemplazo de luminarias zona sur</p>
+<div class="flex items-center gap-2 text-[10px] text-slate-500 border-t border-slate-100 pt-3 dark:border-slate-800">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                            10:15 AM
+                        </span>
+<span class="text-slate-300 dark:text-slate-700">|</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">person</span>
+                            Lic. Ana G.
+                        </span>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-auto">
+<button class="flex w-full items-center justify-center gap-1 rounded-md bg-white border border-primary text-primary py-2 text-xs font-bold shadow-sm active:scale-[0.98] transition-transform hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+                            Iniciar
+                        </button>
+<button class="flex w-full items-center justify-center gap-1 rounded-md bg-slate-100 py-2 text-xs font-bold text-slate-400 cursor-not-allowed opacity-70 dark:bg-slate-800 dark:text-slate-600" disabled="">
+<span class="material-symbols-outlined text-[16px]">check</span>
+                            Completar
+                        </button>
+</div>
+</article>
+<article class="relative flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow dark:border-slate-700 dark:bg-slate-900 h-full opacity-90">
+<div class="flex items-start justify-between">
+<div>
+<div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Folio #2024-103</div>
+<h3 class="text-base font-bold text-slate-900 dark:text-white leading-tight">Cafetería</h3>
+</div>
+<span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-400 whitespace-nowrap">
+                            Baja
+                        </span>
+</div>
+<p class="text-sm font-medium text-slate-600 dark:text-slate-300 flex-grow leading-snug">Revisión de cableado de red</p>
+<div class="flex items-center gap-2 text-[10px] text-slate-500 border-t border-slate-100 pt-3 dark:border-slate-800">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                            11:00 AM
+                        </span>
+<span class="text-slate-300 dark:text-slate-700">|</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">person</span>
+                            Ing. Ruiz
+                        </span>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-auto">
+<button class="flex w-full items-center justify-center gap-1 rounded-md bg-white border border-primary text-primary py-2 text-xs font-bold shadow-sm active:scale-[0.98] transition-transform hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+                            Iniciar
+                        </button>
+<button class="flex w-full items-center justify-center gap-1 rounded-md bg-slate-100 py-2 text-xs font-bold text-slate-400 cursor-not-allowed opacity-70 dark:bg-slate-800 dark:text-slate-600" disabled="">
+<span class="material-symbols-outlined text-[16px]">check</span>
+                            Completar
+                        </button>
+</div>
+</article>
+</div>
+</div>
+</main>
+
+</body></html>
+

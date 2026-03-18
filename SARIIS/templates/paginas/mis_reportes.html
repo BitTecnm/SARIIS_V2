@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mis Reportes - TecNM Minatitlán</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1B396A",
+                        "primary-hover": "#0f254a",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        secondary: "#D4AF37",
+                    },
+                    fontFamily: {
+                        display: ["Lexend", "sans-serif"],
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col overflow-x-hidden">
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/80">
+<div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="flex h-12 w-12 items-center justify-center">
+<img alt="Logotipo Oficial Instituto Tecnológico de Minatitlán" class="h-full w-full object-contain filter drop-shadow-sm" src="https://minatitlan.tecnm.mx/wp-content/uploads/2023/01/Logo.png"/>
+</div>
+<div>
+<h1 class="text-lg font-bold leading-tight tracking-tight text-slate-900 dark:text-white">TecNM Minatitlán</h1>
+<p class="text-xs text-slate-500 dark:text-slate-400">Sistema de Mantenimiento</p>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200" href="/panel">Inicio</a>
+<a class="text-sm font-medium text-primary hover:text-primary-hover dark:text-blue-400" href="/mis-reportes">Mis Reportes</a>
+<a class="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200" href="#">Ayuda</a>
+<a class="text-sm font-bold text-red-600 hover:text-red-700" href="{{ url_for('logout') }}">Salir</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</span>
+<input class="h-10 w-64 rounded-full border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-700 dark:bg-slate-900 dark:text-white" placeholder="Buscar reporte..." type="text"/>
+</div>
+<div id="btn-perfil" class="flex items-center gap-3 border-l border-slate-200 pl-4 dark:border-slate-800 cursor-pointer" title="Ver perfil">
+<div class="flex flex-col items-end hidden sm:flex">
+<span class="text-sm font-bold text-slate-900 dark:text-white">{{ user.nombre }}</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">{{ user.rol }}</span>
+</div>
+<div class="h-10 w-10 overflow-hidden rounded-full bg-slate-200">
+<img alt="Profile" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCW8hhvQIWKsHP1jgM4RR2vCFe7tFoJGhwajgxX2XXIVmka3071EKQMbZClecJT-Ove-ueB33686uOBpplTD6jYQlmvG67FILAPPn9ks6Bn6eiK6hNimk1jN5JBxLyew4SglF963VzIRM1zw4cJMaZ3pmSk_r5fynwp0Hi4eJUc60g5RHoCvFNT4wds4A8mr8GuduM8yf74BJX2RJRwi5VKx4b-8pTv9sj7bbbZyzVdIQYeQsa9EjBi462mos1WKT_XS7WTEb65vt8k"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-4 lg:p-8">
+<!-- Modal de Perfil -->
+<div id="modal-perfil" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm">
+<div class="flex min-h-screen items-center justify-center p-4">
+<div class="relative w-full max-w-md rounded-2xl bg-white shadow-2xl dark:bg-slate-900">
+<div class="flex items-center justify-between border-b border-slate-200 p-6 dark:border-slate-800">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Mi Perfil</h3>
+<button id="btn-cerrar-modal" class="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6">
+<div class="flex flex-col items-center gap-6">
+<div class="relative">
+<div class="h-24 w-24 overflow-hidden rounded-full bg-slate-200 ring-4 ring-white shadow-lg dark:bg-slate-700 dark:ring-slate-900">
+<img alt="Foto de perfil" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCW8hhvQIWKsHP1jgM4RR2vCFe7tFoJGhwajgxX2XXIVmka3071EKQMbZClecJT-Ove-ueB33686uOBpplTD6jYQlmvG67FILAPPn9ks6Bn6eiK6hNimk1jN5JBxLyew4SglF963VzIRM1zw4cJMaZ3pmSk_r5fynwp0Hi4eJUc60g5RHoCvFNT4wds4A8mr8GuduM8yf74BJX2RJRwi5VKx4b-8pTv9sj7bbbZyzVdIQYeQsa9EjBi462mos1WKT_XS7WTEb65vt8k"/>
+</div>
+<div id="status-indicator" class="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-green-500 border-2 border-white shadow-lg dark:border-slate-900"></div>
+</div>
+<div class="w-full space-y-4">
+<div class="text-center">
+<h4 class="text-2xl font-bold text-slate-900 dark:text-white">{{ user.nombre }}</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400">{{ user.rol }}</p>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-primary/20">
+<span class="material-symbols-outlined">badge</span>
+</div>
+<div class="flex-1">
+<label class="text-xs font-medium text-slate-500 dark:text-slate-400">Número de Control</label>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.numero_control }}</p>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-primary/20">
+<span class="material-symbols-outlined">school</span>
+</div>
+<div class="flex-1">
+<label class="text-xs font-medium text-slate-500 dark:text-slate-400">Carrera</label>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.carrera.replace(' (En Línea)', '').replace(' (Presencial)', '') if user.carrera else 'No especificada' }}</p>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-primary/20">
+<span class="material-symbols-outlined">email</span>
+</div>
+<div class="flex-1">
+<label class="text-xs font-medium text-slate-500 dark:text-slate-400">Correo Institucional</label>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.correo_institucional if user.correo_institucional else 'No especificado' }}</p>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-primary/20">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<div class="flex-1">
+<label class="text-xs font-medium text-slate-500 dark:text-slate-400">Fecha de Registro</label>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.created_at[:10] if user.created_at else 'N/A' }}</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-4">
+<h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">Mis Reportes</h2>
+<p class="text-slate-600 dark:text-slate-400">Aquí puedes ver todos tus reportes realizados</p>
+</div>
+
+<div id="filtros" class="flex gap-3 flex-wrap mb-6">
+<button class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-all" data-filtro="todos">
+<span class="material-symbols-outlined text-sm mr-1 inline">check_circle</span>Todos
+</button>
+<button class="px-4 py-2 rounded-lg bg-slate-100 text-slate-900 text-sm font-medium hover:bg-slate-200 transition-all dark:bg-slate-800 dark:text-white" data-filtro="Pendiente">
+<span class="material-symbols-outlined text-sm mr-1 inline">pending_actions</span>Pendiente
+</button>
+<button class="px-4 py-2 rounded-lg bg-slate-100 text-slate-900 text-sm font-medium hover:bg-slate-200 transition-all dark:bg-slate-800 dark:text-white" data-filtro="En Proceso">
+<span class="material-symbols-outlined text-sm mr-1 inline">loop</span>En Proceso
+</button>
+<button class="px-4 py-2 rounded-lg bg-slate-100 text-slate-900 text-sm font-medium hover:bg-slate-200 transition-all dark:bg-slate-800 dark:text-white" data-filtro="Resuelto">
+<span class="material-symbols-outlined text-sm mr-1 inline">check_circle</span>Resuelto
+</button>
+</div>
+
+<div id="reportes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<div class="col-span-full text-center py-12 text-slate-500">
+<span class="material-symbols-outlined text-6xl mb-2 block">inbox</span>
+<p>Cargando reportes...</p>
+</div>
+</div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+  const reportesGrid = document.getElementById('reportes-grid');
+  const filtrosBtns = document.querySelectorAll('[data-filtro]');
+  let todosReportes = [];
+  let filtroActual = 'todos';
+
+  // Obtener todos los reportes
+  async function cargarTodosReportes() {
+    try {
+      const response = await fetch('/api/reportes');
+      const data = await response.json();
+      
+      if (data.success) {
+        todosReportes = data.reportes;
+        mostrarReportes(todosReportes);
+      }
+    } catch (error) {
+      console.error('Error al obtener reportes:', error);
+      reportesGrid.innerHTML = '<div class="col-span-full text-center py-12 text-red-500"><p>Error al cargar los reportes</p></div>';
+    }
+  }
+
+  // Mostrar reportes
+  function mostrarReportes(reportes) {
+    if (reportes.length === 0) {
+      reportesGrid.innerHTML = '<div class="col-span-full text-center py-12 text-slate-500"><span class="material-symbols-outlined text-6xl mb-2 block">inbox</span><p>No hay reportes para mostrar</p></div>';
+      return;
+    }
+
+    reportesGrid.innerHTML = reportes.map(reporte => `
+      <div class="relative flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-lg dark:border-slate-700 dark:bg-slate-900">
+        <div class="mb-3 flex items-start justify-between">
+          <div class="rounded bg-slate-100 px-2 py-1 text-xs font-bold uppercase tracking-wider text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+            #Reporte-${reporte.id}
+          </div>
+          <span class="flex items-center gap-1 rounded-full ${getEstadoColor(reporte.estado)} px-3 py-1 text-xs font-medium">
+            <span class="material-symbols-outlined text-[16px]">${getEstadoIcon(reporte.estado)}</span>
+            ${reporte.estado}
+          </span>
+        </div>
+        <h4 class="mb-1 text-lg font-bold text-slate-900 dark:text-white line-clamp-2">${reporte.titulo}</h4>
+        ${reporte.descripcion ? `<p class="mb-4 text-sm text-slate-500 line-clamp-3 dark:text-slate-400">${reporte.descripcion}</p>` : ''}
+        <div class="mt-auto flex flex-col gap-3 text-xs text-slate-400 border-t border-slate-100 pt-3 dark:border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+            ${new Date(reporte.fecha_creacion).toLocaleDateString('es-MX')} a las ${new Date(reporte.fecha_creacion).toLocaleTimeString('es-MX', {hour: '2-digit', minute:'2-digit'})}
+          </div>
+          ${reporte.area ? `<div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px]">location_on</span>
+            ${reporte.area}${reporte.edificio ? ' - ' + reporte.edificio : ''}
+          </div>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Filtrar reportes
+  function filtrarReportes(filtro) {
+    if (filtro === 'todos') {
+      mostrarReportes(todosReportes);
+    } else {
+      const filtrados = todosReportes.filter(r => r.estado === filtro);
+      mostrarReportes(filtrados);
+    }
+    
+    filtroActual = filtro;
+    actualizarBotonesFiltro();
+  }
+
+  // Actualizar estado visual de botones de filtro
+  function actualizarBotonesFiltro() {
+    filtrosBtns.forEach(btn => {
+      const filtro = btn.getAttribute('data-filtro');
+      if (filtro === filtroActual) {
+        btn.classList.remove('bg-slate-100', 'text-slate-900', 'dark:bg-slate-800', 'dark:text-white');
+        btn.classList.add('bg-primary', 'text-white');
+      } else {
+        btn.classList.remove('bg-primary', 'text-white');
+        btn.classList.add('bg-slate-100', 'text-slate-900', 'dark:bg-slate-800', 'dark:text-white');
+      }
+    });
+  }
+
+  // Obtener color según estado
+  function getEstadoColor(estado) {
+    const colores = {
+      'Pendiente': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+      'En Proceso': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+      'Resuelto': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+    };
+    return colores[estado] || 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-400';
+  }
+
+  // Obtener icono según estado
+  function getEstadoIcon(estado) {
+    const iconos = {
+      'Pendiente': 'pending_actions',
+      'En Proceso': 'loop',
+      'Resuelto': 'check_circle',
+    };
+    return iconos[estado] || 'info';
+  }
+
+  // Event listeners para filtros
+  filtrosBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const filtro = this.getAttribute('data-filtro');
+      filtrarReportes(filtro);
+    });
+  });
+
+  // Funcionalidad del modal de perfil
+  const btnPerfil = document.getElementById('btn-perfil');
+  const modalPerfil = document.getElementById('modal-perfil');
+  const btnCerrarModal = document.getElementById('btn-cerrar-modal');
+
+  if (btnPerfil) {
+    btnPerfil.addEventListener('click', function() {
+      modalPerfil.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+
+  if (btnCerrarModal) {
+    btnCerrarModal.addEventListener('click', function() {
+      modalPerfil.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    });
+  }
+
+  // Cerrar modal al hacer click fuera
+  if (modalPerfil) {
+    modalPerfil.addEventListener('click', function(e) {
+      if (e.target === modalPerfil) {
+        modalPerfil.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+      }
+    });
+  }
+
+  // Cerrar modal con tecla Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modalPerfil && !modalPerfil.classList.contains('hidden')) {
+      modalPerfil.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+  });
+
+  // Lógica de estado en línea
+  const statusIndicator = document.getElementById('status-indicator');
+  let isOnline = true; // Estado del usuario (en línea)
+  
+  function updateOnlineStatus() {
+    if (statusIndicator) {
+      if (isOnline) {
+        statusIndicator.classList.remove('bg-gray-400');
+        statusIndicator.classList.add('bg-green-500');
+      } else {
+        statusIndicator.classList.remove('bg-green-500');
+        statusIndicator.classList.add('bg-gray-400');
+      }
+    }
+  }
+
+  // Detectar cambio de pestaña (el usuario se va de la app)
+  document.addEventListener('visibilitychange', function() {
+    isOnline = !document.hidden;
+    updateOnlineStatus();
+  });
+
+  // Detectar inactividad (si no hay movimiento por X segundos)
+  let inactivityTimeout;
+  const INACTIVITY_TIME = 5 * 60 * 1000; // 5 minutos
+
+  function resetInactivityTimer() {
+    clearTimeout(inactivityTimeout);
+    isOnline = true;
+    updateOnlineStatus();
+
+    inactivityTimeout = setTimeout(() => {
+      isOnline = false;
+      updateOnlineStatus();
+    }, INACTIVITY_TIME);
+  }
+
+  document.addEventListener('mousemove', resetInactivityTimer);
+  document.addEventListener('keypress', resetInactivityTimer);
+  document.addEventListener('click', resetInactivityTimer);
+
+  // Inicializar estado
+  updateOnlineStatus();
+
+  // Cargar reportes al iniciar
+  cargarTodosReportes();
+});
+</script>
+</body></html>

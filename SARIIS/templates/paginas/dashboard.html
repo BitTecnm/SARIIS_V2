@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard Docente con Ubicación Detallada - TecNM Minatitlán</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1B396A", // Official TecNM Navy Blue
+                        "primary-hover": "#0f254a", // Darker shade for hover
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        secondary: "#D4AF37", // Gold accent often used with TecNM
+                    },
+                    fontFamily: {
+                        display: ["Lexend", "sans-serif"],
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col overflow-x-hidden">
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/80">
+<div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="flex h-12 w-12 items-center justify-center">
+<img alt="Logotipo Oficial Instituto Tecnológico de Minatitlán" class="h-full w-full object-contain filter drop-shadow-sm" src="https://minatitlan.tecnm.mx/wp-content/uploads/2023/01/Logo.png"/>
+</div>
+<div>
+<h1 class="text-lg font-bold leading-tight tracking-tight text-slate-900 dark:text-white">TecNM Minatitlán</h1>
+<p class="text-xs text-slate-500 dark:text-slate-400">Sistema de Mantenimiento</p>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-primary hover:text-primary-hover dark:text-blue-400" href="/panel">Inicio</a>
+<a class="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200" href="/mis-reportes">Mis Reportes</a>
+<a class="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200" href="#">Ayuda</a>
+<a class="text-sm font-bold text-red-600 hover:text-red-700" href="{{ url_for('logout') }}">Salir</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</span>
+<input class="h-10 w-64 rounded-full border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-700 dark:bg-slate-900 dark:text-white" placeholder="Buscar reporte..." type="text"/>
+</div>
+<div id="btn-perfil" class="flex items-center gap-3 border-l border-slate-200 pl-4 dark:border-slate-800 cursor-pointer" title="Ver perfil">
+<div class="flex flex-col items-end hidden sm:flex">
+<span class="text-sm font-bold text-slate-900 dark:text-white">{{ user.nombre }}</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">{{ user.rol }}</span>
+</div>
+<div class="h-10 w-10 overflow-hidden rounded-full bg-slate-200">
+<img alt="Profile" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCW8hhvQIWKsHP1jgM4RR2vCFe7tFoJGhwajgxX2XXIVmka3071EKQMbZClecJT-Ove-ueB33686uOBpplTD6jYQlmvG67FILAPPn9ks6Bn6eiK6hNimk1jN5JBxLyew4SglF963VzIRM1zw4cJMaZ3pmSk_r5fynwp0Hi4eJUc60g5RHoCvFNT4wds4A8mr8GuduM8yf74BJX2RJRwi5VKx4b-8pTv9sj7bbbZyzVdIQYeQsa9EjBi462mos1WKT_XS7WTEb65vt8k"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-4 lg:flex-row lg:p-8">
+<!-- Modal de Perfil -->
+<div id="modal-perfil" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm">
+<div class="flex min-h-screen items-center justify-center p-4">
+<div class="relative w-full max-w-md rounded-2xl bg-white shadow-2xl dark:bg-slate-900">
+<div class="flex items-center justify-between border-b border-slate-200 p-6 dark:border-slate-800">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Mi Perfil</h3>
+<button id="btn-cerrar-modal" class="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6">
+<div class="flex flex-col items-center gap-6">
+<div class="relative">
+<div class="h-24 w-24 overflow-hidden rounded-full bg-slate-200 ring-4 ring-white shadow-lg dark:bg-slate-700 dark:ring-slate-900">
+<img alt="Foto de perfil" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCW8hhvQIWKsHP1jgM4RR2vCFe7tFoJGhwajgxX2XXIVmka3071EKQMbZClecJT-Ove-ueB33686uOBpplTD6jYQlmvG67FILAPPn9ks6Bn6eiK6hNimk1jN5JBxLyew4SglF963VzIRM1zw4cJMaZ3pmSk_r5fynwp0Hi4eJUc60g5RHoCvFNT4wds4A8mr8GuduM8yf74BJX2RJRwi5VKx4b-8pTv9sj7bbbZyzVdIQYeQsa9EjBi462mos1WKT_XS7WTEb65vt8k"/>
+</div>
+<div id="status-indicator" class="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-green-500 border-2 border-white shadow-lg dark:border-slate-900"></div>
+</div>
+<div class="w-full space-y-4">
+<div class="text-center">
+<h4 class="text-2xl font-bold text-slate-900 dark:text-white">{{ user.nombre }}</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400">{{ user.rol }}</p>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-primary/20">
+<span class="material-symbols-outlined">badge</span>
+</div>
+<div class="flex-1">
+<label class="text-xs font-medium text-slate-500 dark:text-slate-400">Número de Control</label>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.numero_control }}</p>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-primary/20">
+<span class="material-symbols-outlined">school</span>
+</div>
+<div class="flex-1">
+<label class="text-xs font-medium text-slate-500 dark:text-slate-400">Carrera</label>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.carrera.replace(' (En Línea)', '').replace(' (Presencial)', '') if user.carrera else 'No especificada' }}</p>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-primary/20">
+<span class="material-symbols-outlined">email</span>
+</div>
+<div class="flex-1">
+<label class="text-xs font-medium text-slate-500 dark:text-slate-400">Correo Institucional</label>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.correo_institucional if user.correo_institucional else 'No especificado' }}</p>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-primary/20">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<div class="flex-1">
+<label class="text-xs font-medium text-slate-500 dark:text-slate-400">Fecha de Registro</label>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.created_at[:10] if user.created_at else 'N/A' }}</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-1 flex-col gap-8">
+<section class="rounded-2xl bg-gradient-to-r from-primary to-blue-900 p-8 text-white shadow-lg relative overflow-hidden">
+<div class="relative z-10 flex flex-col items-start gap-4">
+<div>
+<h2 class="text-3xl font-bold tracking-tight mb-2">Hola, {{ user.nombre }}</h2>
+<p class="max-w-xl text-blue-100/90 text-lg">Bienvenido al panel de reportes. ¿Hay algo que necesite mantenimiento hoy en el campus?</p>
+</div>
+</div>
+<div class="absolute -right-10 -top-10 h-64 w-64 rounded-full bg-white/5 blur-3xl"></div>
+<div class="absolute right-20 bottom-0 h-40 w-40 rounded-full bg-white/10 blur-2xl"></div>
+</section>
+<section>
+<div class="mb-5 flex items-center justify-between">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Acciones Rápidas</h3>
+</div>
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+<button id="btn-crear-reporte" class="group flex flex-col items-start justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-primary hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-primary cursor-pointer">
+<div class="mb-4 rounded-lg bg-primary/10 p-3 text-primary dark:bg-primary/20">
+<span class="material-symbols-outlined text-3xl">add_circle</span>
+</div>
+<div class="text-left">
+<span class="block text-lg font-bold text-slate-900 group-hover:text-primary dark:text-white">Crear Reporte</span>
+<span class="text-sm text-slate-500 dark:text-slate-400">Reportar una nueva falla</span>
+</div>
+</button>
+<button id="btn-historial" class="group flex flex-col items-start justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-blue-500 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 cursor-pointer">
+<div class="mb-4 rounded-lg bg-blue-100 p-3 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+<span class="material-symbols-outlined text-3xl">history</span>
+</div>
+<div class="text-left">
+<span class="block text-lg font-bold text-slate-900 group-hover:text-blue-600 dark:text-white">Historial</span>
+<span class="text-sm text-slate-500 dark:text-slate-400">Ver reportes anteriores</span>
+</div>
+</button>
+<button class="group flex flex-col items-start justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-orange-500 hover:shadow-md dark:border-slate-700 dark:bg-slate-900">
+<div class="mb-4 rounded-lg bg-orange-100 p-3 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
+<span class="material-symbols-outlined text-3xl">support_agent</span>
+</div>
+<div class="text-left">
+<span class="block text-lg font-bold text-slate-900 group-hover:text-orange-600 dark:text-white">Soporte</span>
+<span class="text-sm text-slate-500 dark:text-slate-400">Contactar a sistemas</span>
+</div>
+</button>
+</div>
+</section>
+<section>
+<div class="mb-5 flex items-center justify-between">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Mis Reportes Recientes</h3>
+</div>
+<div id="reportes-container" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2">
+<div class="text-center py-8 col-span-full text-slate-500">
+<span class="material-symbols-outlined text-5xl mb-2 block">inbox</span>
+<p>No hay reportes aún. ¡Crea uno nuevo!</p>
+</div>
+</div>
+</section>
+</div>
+<aside class="w-full lg:w-[400px]">
+<div class="sticky top-24 rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900">
+<div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4 dark:border-slate-800 dark:bg-slate-900">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">edit_document</span>
+                    Nuevo Reporte
+                </h3>
+</div>
+<form id="form-reporte" class="flex flex-col gap-5 p-6">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Título del Reporte *</label>
+<input type="text" id="titulo" class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-4 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-white" placeholder="Describe el problema brevemente..." required/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Área del Incidente</label>
+<div class="relative">
+<span class="absolute left-3 top-3 text-slate-400">
+<span class="material-symbols-outlined text-[20px]">meeting_room</span>
+</span>
+<select id="area" class="w-full appearance-none rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-white">
+<option value="">Seleccionar Área</option>
+<option value="Aula">Aula</option>
+<option value="Laboratorio">Laboratorio</option>
+<option value="Pasillo">Pasillo</option>
+<option value="Baños">Baños</option>
+<option value="Oficina">Oficina</option>
+<option value="Auditorio">Auditorio</option>
+</select>
+<span class="absolute right-3 top-3 pointer-events-none text-slate-400">
+<span class="material-symbols-outlined text-[20px]">expand_more</span>
+</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Edificio</label>
+<div class="relative">
+<span class="absolute left-3 top-3 text-slate-400">
+<span class="material-symbols-outlined text-[20px]">apartment</span>
+</span>
+<select id="edificio" class="w-full appearance-none rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-white">
+<option value="">Seleccionar Edificio</option>
+<option value="Edificio A">Edificio A</option>
+<option value="Edificio B">Edificio B</option>
+<option value="Edificio C">Edificio C</option>
+<option value="Edificio D">Edificio D</option>
+<option value="Administrativo">Administrativo</option>
+<option value="Biblioteca">Biblioteca</option>
+</select>
+<span class="absolute right-3 top-3 pointer-events-none text-slate-400">
+<span class="material-symbols-outlined text-[20px]">expand_more</span>
+</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Tipo de Falla</label>
+<div class="relative">
+<span class="absolute left-3 top-3 text-slate-400">
+<span class="material-symbols-outlined text-[20px]">category</span>
+</span>
+<select id="tipo_falla" class="w-full appearance-none rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-white">
+<option value="">Seleccione Categoría</option>
+<option value="Electricidad e Iluminación">Electricidad e Iluminación</option>
+<option value="Aire Acondicionado">Aire Acondicionado</option>
+<option value="Mobiliario">Mobiliario</option>
+<option value="Plomería / Baños">Plomería / Baños</option>
+<option value="Equipo de Cómputo">Equipo de Cómputo</option>
+<option value="Limpieza">Limpieza</option>
+</select>
+<span class="absolute right-3 top-3 pointer-events-none text-slate-400">
+<span class="material-symbols-outlined text-[20px]">expand_more</span>
+</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Descripción Detallada</label>
+<textarea id="descripcion" class="w-full resize-none rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-white" placeholder="Describa el problema lo más detallado posible (ej. número de salón, equipo específico)..." rows="4"></textarea>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Evidencia Fotográfica</label>
+<label class="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 py-6 transition-colors hover:border-primary hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700">
+<div class="flex flex-col items-center justify-center pb-1 pt-1">
+<span class="material-symbols-outlined mb-2 text-3xl text-slate-400">cloud_upload</span>
+<p class="mb-1 text-sm text-slate-500 dark:text-slate-400"><span class="font-semibold">Haga clic para subir</span> o arrastre</p>
+<p class="text-xs text-slate-400 dark:text-slate-500">SVG, PNG, JPG (Max. 5MB)</p>
+</div>
+<input class="hidden" id="evidencia" type="file"/>
+</label>
+</div>
+<div class="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+<button id="btn-enviar" class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-bold text-white transition-all hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/30 active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined">send</span>
+Enviar Reporte
+</button>
+</div>
+</form>
+</div>
+</aside>
+</main>
+
+</body>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const formReporte = document.getElementById('form-reporte');
+  const btnEnviar = document.getElementById('btn-enviar');
+  const reportesContainer = document.getElementById('reportes-container');
+  const btnCrearReporte = document.getElementById('btn-crear-reporte');
+  const btnHistorial = document.getElementById('btn-historial');
+  const btnPerfil = document.getElementById('btn-perfil');
+  const modalPerfil = document.getElementById('modal-perfil');
+  const btnCerrarModal = document.getElementById('btn-cerrar-modal');
+
+  // Funcionalidad de acciones rápidas
+  if (btnCrearReporte) {
+    btnCrearReporte.addEventListener('click', function() {
+      const tituloInput = document.getElementById('titulo');
+      if (tituloInput) {
+        tituloInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        tituloInput.focus();
+      }
+    });
+  }
+
+  if (btnHistorial) {
+    btnHistorial.addEventListener('click', function() {
+      window.location.href = '/mis-reportes';
+    });
+  }
+
+  // Funcionalidad del modal de perfil
+  if (btnPerfil) {
+    btnPerfil.addEventListener('click', function() {
+      modalPerfil.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+
+  if (btnCerrarModal) {
+    btnCerrarModal.addEventListener('click', function() {
+      modalPerfil.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    });
+  }
+
+  // Cerrar modal al hacer click fuera
+  modalPerfil.addEventListener('click', function(e) {
+    if (e.target === modalPerfil) {
+      modalPerfil.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+  });
+
+  // Cerrar modal con tecla Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !modalPerfil.classList.contains('hidden')) {
+      modalPerfil.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+  });
+
+  // Lógica de estado en línea
+  const statusIndicator = document.getElementById('status-indicator');
+  let isOnline = true; // Estado del usuario (en línea)
+  
+  function updateOnlineStatus() {
+    if (statusIndicator) {
+      if (isOnline) {
+        statusIndicator.classList.remove('bg-gray-400');
+        statusIndicator.classList.add('bg-green-500');
+      } else {
+        statusIndicator.classList.remove('bg-green-500');
+        statusIndicator.classList.add('bg-gray-400');
+      }
+    }
+  }
+
+  // Detectar cambio de pestaña (el usuario se va de la app)
+  document.addEventListener('visibilitychange', function() {
+    isOnline = !document.hidden;
+    updateOnlineStatus();
+  });
+
+  // Detectar inactividad (si no hay movimiento por X segundos)
+  let inactivityTimeout;
+  const INACTIVITY_TIME = 5 * 60 * 1000; // 5 minutos
+
+  function resetInactivityTimer() {
+    clearTimeout(inactivityTimeout);
+    isOnline = true;
+    updateOnlineStatus();
+
+    inactivityTimeout = setTimeout(() => {
+      isOnline = false;
+      updateOnlineStatus();
+    }, INACTIVITY_TIME);
+  }
+
+  document.addEventListener('mousemove', resetInactivityTimer);
+  document.addEventListener('keypress', resetInactivityTimer);
+  document.addEventListener('click', resetInactivityTimer);
+
+  // Inicializar estado
+  updateOnlineStatus();
+
+  // Obtener y mostrar reportes del usuario (solo los 2 más recientes)
+  async function cargarReportes() {
+    try {
+      const response = await fetch('/api/reportes/recientes/2');
+      const data = await response.json();
+      
+      if (data.success && data.reportes.length > 0) {
+        mostrarReportes(data.reportes);
+      }
+    } catch (error) {
+      console.error('Error al obtener reportes:', error);
+    }
+  }
+
+  // Mostrar reportes en el DOM
+  function mostrarReportes(reportes) {
+    reportesContainer.innerHTML = reportes.map(reporte => `
+      <div class="relative flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-slate-700 dark:bg-slate-900">
+        <div class="mb-3 flex items-start justify-between">
+          <div class="rounded bg-slate-100 px-2 py-1 text-xs font-bold uppercase tracking-wider text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+            #Reporte-${reporte.id}
+          </div>
+          <span class="flex items-center gap-1 rounded-full ${getEstadoColor(reporte.estado)} px-3 py-1 text-xs font-medium">
+            <span class="material-symbols-outlined text-[16px]">${getEstadoIcon(reporte.estado)}</span>
+            ${reporte.estado}
+          </span>
+        </div>
+        <h4 class="mb-1 text-lg font-bold text-slate-900 dark:text-white">${reporte.titulo}</h4>
+        ${reporte.descripcion ? `<p class="mb-4 text-sm text-slate-500 line-clamp-2 dark:text-slate-400">${reporte.descripcion}</p>` : ''}
+        <div class="mt-auto flex items-center gap-4 text-xs text-slate-400 border-t border-slate-100 pt-3 dark:border-slate-800">
+          <span class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+            ${new Date(reporte.fecha_creacion).toLocaleDateString('es-MX')}
+          </span>
+          ${reporte.area ? `<span class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">location_on</span>
+            ${reporte.area}${reporte.edificio ? ' - ' + reporte.edificio : ''}
+          </span>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Obtener color según estado
+  function getEstadoColor(estado) {
+    const colores = {
+      'Pendiente': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+      'En Proceso': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+      'Resuelto': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+    };
+    return colores[estado] || 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-400';
+  }
+
+  // Obtener icono según estado
+  function getEstadoIcon(estado) {
+    const iconos = {
+      'Pendiente': 'pending_actions',
+      'En Proceso': 'loop',
+      'Resuelto': 'check_circle',
+    };
+    return iconos[estado] || 'info';
+  }
+
+  // Función para mostrar mensajes
+  function showMessage(message, type = 'info') {
+    // Eliminar mensaje anterior si existe
+    const existingAlert = document.querySelector('[role="alert"]');
+    if (existingAlert) existingAlert.remove();
+
+    const alertClass =
+      type === 'error'
+        ? 'bg-red-50 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800'
+        : type === 'success'
+          ? 'bg-green-50 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800'
+          : 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800';
+
+    const alert = document.createElement('div');
+    alert.setAttribute('role', 'alert');
+    alert.className = `p-4 mb-4 rounded-lg border ${alertClass} animate-pulse fixed top-6 right-6 max-w-sm z-50 shadow-lg`;
+    alert.innerHTML = `<div class="flex items-center gap-3"><span class="material-symbols-outlined text-xl">${type === 'error' ? 'error' : type === 'success' ? 'check_circle' : 'info'}</span><span>${message}</span></div>`;
+    
+    document.body.appendChild(alert);
+
+    if (type !== 'error') {
+      setTimeout(() => alert.remove(), 3500);
+    }
+  }
+
+  // Enviar reporte
+  btnEnviar.addEventListener('click', async function(e) {
+    e.preventDefault();
+    
+    const titulo = document.getElementById('titulo').value.trim();
+    const area = document.getElementById('area').value.trim();
+    const edificio = document.getElementById('edificio').value.trim();
+    const tipoFalla = document.getElementById('tipo_falla').value.trim();
+    const descripcion = document.getElementById('descripcion').value.trim();
+
+    if (!titulo) {
+      showMessage('Por favor ingresa un título para el reporte', 'error');
+      document.getElementById('titulo').focus();
+      return;
+    }
+
+    btnEnviar.disabled = true;
+    btnEnviar.innerHTML = '<span class="material-symbols-outlined animate-spin">hourglass_top</span> Enviando...';
+
+    try {
+      const response = await fetch('/api/reportes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          titulo: titulo,
+          area: area || null,
+          edificio: edificio || null,
+          descripcion: descripcion || null
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        showMessage('✓ Reporte creado exitosamente', 'success');
+        formReporte.reset();
+        setTimeout(() => {
+          cargarReportes(); // Recargar reportes después de 1 segundo
+        }, 1000);
+      } else {
+        showMessage('Error: ' + (data.message || 'No se pudo crear el reporte'), 'error');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showMessage('Error de conexión al crear el reporte', 'error');
+    } finally {
+      btnEnviar.disabled = false;
+      btnEnviar.innerHTML = '<span class="material-symbols-outlined">send</span> Enviar Reporte';
+    }
+  });
+
+  // Cargar reportes al iniciar
+  cargarReportes();
+});
+</script>
+</html>
+

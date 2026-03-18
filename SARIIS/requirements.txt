@@ -1,0 +1,27 @@
+# SARIIS - Requirements
+# Sistema de Reportes de Incidentes y Mantenimiento del ITM
+# Python 3.11+
+
+# ==================== CORE FRAMEWORK ====================
+Flask==3.1.3                    # Web framework principal
+Werkzeug==3.1.6                 # WSGI utility library
+click==8.3.1                    # CLI creation kit
+itsdangerous==2.2.0             # Security utilities
+
+# ==================== TEMPLATING ====================
+Jinja2==3.1.6                   # Template engine
+MarkupSafe==3.0.3               # Safe string handling
+
+# ==================== UTILITIES ====================
+blinker==1.9.0                  # Signal support
+colorama==0.4.6                 # Terminal colors (cross-platform)
+
+# ==================== DEVELOPMENT ====================
+# Descomenta para desarrollo:
+flask-cors==4.0.0              # CORS support
+python-dotenv==1.0.0           # Environment variables
+
+# ==================== PRODUCTION ====================
+# Descomenta para producción:
+gunicorn==21.2.0               # WSGI HTTP Server
+
